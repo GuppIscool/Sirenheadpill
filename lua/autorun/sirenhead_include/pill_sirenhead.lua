@@ -16,29 +16,27 @@ pk_pills.register("sirenhead", {
         offset = Vector(0, 0, 260),
         dist = 400
     },
-    -- Standard Garry's Mod player model animation set.
+    seqInit = "idle",
+    -- The model's own sequences: burn, crawl, ded, kill, shot, idle, injured, run, walk.
     anims = {
         default = {
-            idle = "idle_magic",
-            walk = "walk_magic",
-            run = "run_magic",
-            crouch = "cidle_magic",
-            crouch_walk = "cwalk_magic",
-            glide = "jump_magic",
-            jump = "jump_magic",
-            swim = "swimming_magic"
+            idle = "idle",
+            walk = "walk",
+            run = "run",
+            crouch = "crawl",
+            crouch_walk = "crawl",
+            glide = "idle",
+            jump = "idle",
+            swim = "walk",
+            melee = "kill",
+            scream = "shot"
         }
-    },
-    aim = {
-        xPose = "aim_yaw",
-        yPose = "aim_pitch"
     },
     moveSpeed = {
         walk = 90,
         run = 280,
         ducked = 60
     },
-    movePoseMode = "yaw",
     jumpPower = 250,
     noFallDamage = true,
     attack = {
@@ -48,6 +46,7 @@ pk_pills.register("sirenhead", {
         dmg = 45,
         func = function(ply, ent, tbl)
             if not ply:IsOnGround() then return end
+            ent:PillAnim("melee", true)
             ent:PillSound("melee")
 
             timer.Simple(tbl.delay, function()
@@ -56,6 +55,7 @@ pk_pills.register("sirenhead", {
                 local hit = ply:TraceHullAttack(ply:GetShootPos(), ply:GetShootPos() + ply:EyeAngles():Forward() * tbl.range, Vector(-20, -20, -20), Vector(20, 20, 20), tbl.dmg, DMG_SLASH, 1, true)
 
                 ent:PillSound(hit and "melee_hit" or "melee_miss")
+                ent:PillAnim("idle")
             end)
         end
     },
@@ -63,7 +63,13 @@ pk_pills.register("sirenhead", {
         mode = "trigger",
         delay = 4,
         func = function(ply, ent)
+            ent:PillAnim("scream", true)
             ent:PillSound("siren")
+
+            timer.Simple(2, function()
+                if not IsValid(ent) then return end
+                ent:PillAnim("idle")
+            end)
         end
     },
     sounds = {
