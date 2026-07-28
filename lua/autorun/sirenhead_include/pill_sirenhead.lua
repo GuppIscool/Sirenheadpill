@@ -13,8 +13,8 @@ pk_pills.register("sirenhead", {
     duckBy = 50,
     stepSize = 40,
     camera = {
-        offset = Vector(0, 0, 120),
-        dist = 300
+        offset = Vector(0, 0, 260),
+        dist = 400
     },
     -- Standard Garry's Mod player model animation set.
     anims = {
