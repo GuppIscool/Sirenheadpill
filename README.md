@@ -1,70 +1,43 @@
 # Siren Head Pill Pack
 
-A small, self-contained pill pack base for Garry's Mod. No workshop base addon required — take a
-pill entity and you become the model, press your revert key to change back.
+A pill pack for [Parakeet's Pill Pack Base (Revised)](https://github.com/Setnour6/PillPackBaseRevised).
+Adds a **Siren Head** pill using `models/ametryx/master.mdl`.
+
+## Requirements
+
+- Pill Pack Base (Revised) — this pack does nothing without it (it prints a warning and stops loading).
+- The Siren Head model addon providing `models/ametryx/master.mdl`.
 
 ## Install
 
-Copy this folder into `garrysmod/addons/` (so you end up with
-`garrysmod/addons/Sirenheadpill/lua/...`) and restart the game or server.
+Copy this folder into `garrysmod/addons/`, so you end up with
+`garrysmod/addons/Sirenheadpill/lua/autorun/sirenhead_pack.lua`.
 
-## Using it in game
+The pill shows up in the pill menu under the **Siren Head** pack.
 
-1. Spawn menu → **Entities** → **Pills** → **Siren Head**.
-2. Press **E** on the pill to transform.
-3. Press **G** (or type `pill_revert` in console) to change back. Dying also reverts you.
+## Controls
 
-## Adding your model
+| Input | Action |
+| --- | --- |
+| Primary attack | Melee swipe (45 damage, 110 units) |
+| Secondary attack | Siren blast (4s cooldown) |
 
-Put the Siren Head PM/NPC files in `models/` and `materials/` of this addon, then set the path in
-`lua/pillbase/pills/sirenhead.lua`:
+## Files
 
-```lua
-local MODEL = "models/sirenhead/sirenhead.mdl"
-```
+- `lua/autorun/sirenhead_pack.lua` — registers the pack with `pk_pills.packStart`.
+- `lua/autorun/sirenhead_include/pill_sirenhead.lua` — the pill definition.
+- `materials/pills/sirenhead.png` — pill menu icon (placeholder, 256x256; replace with real art).
 
-Until that model exists the pill falls back to a stock model so it is still usable.
+## Tuning
 
-## Adding more pills
+Values worth adjusting once you see it in game, all in `pill_sirenhead.lua`:
 
-Drop a new file in `lua/pillbase/pills/`. It is loaded on both the client and server automatically,
-and a spawnable entity `pill_<id>` is generated for it.
+- `hull` / `duckBy` — collision box size. Too small and you clip into things, too big and you get
+  stuck in doorways.
+- `camera.offset` / `camera.dist` — third person camera height and pull-back.
+- `modelScale` — set above 1 if the model is player-height instead of towering.
+- `anims.default` — uses the standard Garry's Mod player model animation set (`idle_magic`,
+  `walk_magic`, `run_magic`, …). If the model ships its own sequences, put their names here.
+- `sounds` — currently placeholder HL2 sounds; drop custom `.wav` files in `sound/` and point at them.
 
-```lua
-local PILL = {}
-
-PILL.Name = "Zombie"
-PILL.Model = "models/zombie/classic.mdl"
-PILL.Health = 150
-PILL.RunSpeed = 180
-PILL.Hull = { Vector(-16, -16, 0), Vector(16, 16, 72) }
-PILL.ViewOffset = Vector(0, 0, 64)
-
-PillBase.Register("zombie", PILL)
-```
-
-Every supported field and its default lives in `PillBase.Defaults` in
-`lua/pillbase/sh_pillbase.lua`: model/skin/bodygroups/scale/colour, health, armour, walk and run
-speed, jump power, gravity, step size, hull, view offset, third person settings, weapon stripping,
-transform and revert sounds, and `OnTransform` / `OnRevert` callbacks.
-
-## Console variables
-
-| ConVar | Realm | Default | Description |
-| --- | --- | --- | --- |
-| `pillbase_enabled` | server | `1` | Allow players to take pills. |
-| `pillbase_revert_key` | server | `KEY_G` | Key code used to revert. |
-| `pillbase_thirdperson` | client | `1` | Use third person while transformed. |
-
-## Lua API
-
-```lua
-PillBase.Register(id, pill)      -- register a pill (shared)
-PillBase.Get(id)                 -- pill table by id (shared)
-PillBase.IsTransformed(ply)      -- bool (shared)
-PillBase.GetActivePill(ply)      -- pill table or nil (shared)
-PillBase.Transform(ply, id)      -- server
-PillBase.Revert(ply)             -- server
-```
-
-Hooks: `PillBase_PlayerTransformed(ply, pill)` and `PillBase_PlayerReverted(ply, pill)`.
+Full list of supported fields: `pk_pills.register` in the base's `lua/includes/modules/pk_pills.lua`.
