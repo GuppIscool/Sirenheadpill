@@ -21,11 +21,14 @@ The pill shows up in the pill menu under the **Siren Head** pack.
 | --- | --- |
 | Primary attack | Melee swipe (45 damage, 110 units) |
 | Secondary attack | Siren blast (4s cooldown) |
+| R | **Rage mode** — crawls on all fours, much faster, 20s, then a 45s cooldown |
+| E | **Siren sonar** — stands still while a ring expands; players caught in it are highlighted for 8s. Press E again to stop, 30s cooldown |
 
 ## Files
 
 - `lua/autorun/sirenhead_pack.lua` — registers the pack with `pk_pills.packStart`.
-- `lua/autorun/sirenhead_include/pill_sirenhead.lua` — the pill definition.
+- `lua/autorun/sirenhead_include/pill_sirenhead.lua` — the pill definition (incl. rage mode).
+- `lua/autorun/sirenhead_include/sonar.lua` — the sonar ability, its networking and rendering.
 - `materials/pills/sirenhead.png` — pill menu icon (placeholder, 256x256; replace with real art).
 
 ## Tuning
