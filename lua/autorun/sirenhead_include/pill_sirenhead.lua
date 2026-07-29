@@ -1,13 +1,5 @@
 AddCSLuaFile()
 
-local WALK = 150
-local RUN = 420
-
-local RAGE_DURATION = 20
-local RAGE_COOLDOWN = 45
-local RAGE_WALK = 260
-local RAGE_RUN = 700
-
 pk_pills.register("sirenhead", {
     printName = "Siren Head",
     side = "wild",
@@ -15,14 +7,14 @@ pk_pills.register("sirenhead", {
     model = "models/ametryx/master.mdl",
     default_rp_cost = 15000,
     health = 750,
-    modelScale = .7,
+    modelScale = .35,
     -- Tune these to the model: hull is the collision box size, duckBy is how much it shrinks when ducking.
-    hull = Vector(40, 40, 110),
-    duckBy = 45,
-    stepSize = 40,
+    hull = Vector(28, 28, 62),
+    duckBy = 26,
+    stepSize = 30,
     camera = {
-        offset = Vector(0, 0, 300),
-        dist = 430
+        offset = Vector(0, 0, 150),
+        dist = 260
     },
     seqInit = "idle",
     -- The model's own sequences: burn, crawl, ded, kill, shot, idle, injured, run, walk.
@@ -39,9 +31,10 @@ pk_pills.register("sirenhead", {
             melee = "kill",
             scream = "shot"
         },
-        -- Swapped in by rage mode, see reload below.
+        -- Swapped in by rage mode, see reload below. Idle stays upright so he
+        -- only crawls while actually moving.
         rage = {
-            idle = "crawl",
+            idle = "idle",
             walk = "crawl",
             run = "crawl",
             crouch = "crawl",
@@ -53,9 +46,9 @@ pk_pills.register("sirenhead", {
         }
     },
     moveSpeed = {
-        walk = WALK,
-        run = RUN,
-        ducked = 90
+        walk = SirenHead.Walk,
+        run = SirenHead.Run,
+        ducked = 120
     },
     jumpPower = 250,
     noFallDamage = true,
@@ -94,38 +87,7 @@ pk_pills.register("sirenhead", {
     },
     -- Rage mode: R drops Siren Head onto all fours and makes it much faster.
     reload = function(ply, ent)
-        if ent.raging then return end
-
-        local cooldown = (ent.rageCooldown or 0) - CurTime()
-
-        if cooldown > 0 then
-            ply:PrintMessage(HUD_PRINTCENTER, "Rage ready in " .. math.ceil(cooldown) .. "s")
-
-            return
-        end
-
-        ent.raging = true
-        ent.forceAnimSet = "rage"
-        ent:PillAnim("idle")
-        ent:PillSound("rage")
-        ply:SetWalkSpeed(RAGE_WALK)
-        ply:SetRunSpeed(RAGE_RUN)
-        ply:PrintMessage(HUD_PRINTCENTER, "RAGE")
-
-        timer.Simple(RAGE_DURATION, function()
-            if not IsValid(ent) then return end
-
-            ent.raging = nil
-            ent.forceAnimSet = nil
-            ent.rageCooldown = CurTime() + RAGE_COOLDOWN
-            ent:PillAnim("idle")
-
-            if not IsValid(ply) then return end
-
-            ply:SetWalkSpeed(WALK)
-            ply:SetRunSpeed(RUN)
-            ply:PrintMessage(HUD_PRINTCENTER, "Rage over")
-        end)
+        SirenHead.StartRage(ply, ent)
     end,
     sounds = {
         siren = "ambient/alarms/klaxon1.wav",

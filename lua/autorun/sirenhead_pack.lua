@@ -1,6 +1,7 @@
 AddCSLuaFile()
+AddCSLuaFile("sirenhead_include/abilities.lua")
 AddCSLuaFile("sirenhead_include/pill_sirenhead.lua")
-AddCSLuaFile("sirenhead_include/sonar.lua")
+AddCSLuaFile("sirenhead_include/hud.lua")
 
 local realm = SERVER and "server" or "client"
 
@@ -20,7 +21,8 @@ end
 
 pk_pills.packStart("Siren Head", "sirenhead", "pills/sirenhead.png")
 
+include("sirenhead_include/abilities.lua")
 include("sirenhead_include/pill_sirenhead.lua")
-include("sirenhead_include/sonar.lua")
+include("sirenhead_include/hud.lua")
 
 print("[Siren Head Pills] Pack loaded on the " .. realm .. ".")
